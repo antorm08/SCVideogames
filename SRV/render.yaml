@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: steam-recommender
-    env: python
-    buildCommand: ""
-    startCommand: streamlit run app.py
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.9
