@@ -5,7 +5,7 @@ import joblib
 
 # Cargar datasets
 steam_df = pd.read_csv("steam.csv")
-media_df = pd.read_csv("steam_media_data.csv")
+media_df = pd.read_csv("steam_media_small.csv")
 
 # Unir imagen de portada
 steam_df = pd.merge(
