@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import os
 import urllib.request
 
 # === DESCARGAR EL ARCHIVO DESDE GOOGLE DRIVE ===
