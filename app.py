@@ -108,7 +108,7 @@ st.markdown("### 🎯 Juego seleccionado")
 col1, col2 = st.columns([1, 3])
 with col1:
     if pd.notna(juego_seleccionado['header_image']):
-        st.image(juego_seleccionado['header_image'], use_column_width=True)
+        st.image(juego_seleccionado['header_image'], use_container_width=True)
 with col2:
     st.write(f"**Desarrollador:** {juego_seleccionado['developer']}")
     st.write(f"**Fecha de lanzamiento:** {juego_seleccionado['release_date']}")
@@ -128,7 +128,7 @@ if st.button("🔍 Recomendar juegos similares"):
                 st.markdown(f"**🎮 {rec['nombre']}**")
                 img_url = steam_df[steam_df['name'] == rec['nombre']]['header_image'].values
                 if len(img_url) > 0 and pd.notna(img_url[0]):
-                    st.image(img_url[0], use_column_width=True)
+                    st.image(img_url[0], use_container_width=True)
                 st.write(f"- 👨‍💻 Developer: {rec['developer']}")
                 st.write(f"- 🏷️ Tags comunes: {rec['tags_comunes']}")
                 st.write(f"- 🎵 Géneros comunes: {rec['genres_comunes']}")
