@@ -10,12 +10,12 @@ media_df = pd.read_csv("steam_media_small.csv")
 # Unir imagen de portada
 steam_df = pd.merge(
     steam_df,
-    media_df[['steam_appid', 'header_image']],
+    media_df[['appid', 'header_image']],
     left_on='appid',
-    right_on='steam_appid',
+    right_on='appid',
     how='left'
 )
-steam_df.drop(columns=['steam_appid'], inplace=True)
+steam_df.drop(columns=['appid'], inplace=True)
 
 # Cargar archivos para recomendación
 df = joblib.load('modelo/df.pkl')
