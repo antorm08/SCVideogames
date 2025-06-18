@@ -2,6 +2,16 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import urllib.request
+
+# === DESCARGAR EL ARCHIVO DESDE GOOGLE DRIVE ===
+os.makedirs("modelo", exist_ok=True)
+
+tags_url = "https://drive.google.com/uc?export=download&id=1duY0X8vkUaDEinBd2aEU6JCEvnLIdEef"
+tags_path = "modelo/tags_bin.pkl"
+
+if not os.path.exists(tags_path):
+    urllib.request.urlretrieve(tags_url, tags_path)
 
 # Cargar datasets
 steam_df = pd.read_csv("steam.csv")
