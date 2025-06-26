@@ -36,7 +36,7 @@ def recomendar_juegos_por_nombre(nombre_juego, n_recomendaciones=5, min_tags_com
     cluster_objetivo = clusters_dec[juego_idx]
     vector_objetivo = X_encoded[juego_idx]
 
-    TAG_WEIGHT = 5.0
+    TAG_WEIGHT = 6.0
     GENRE_WEIGHT = 1.0
     resultados = []
     indices_incluidos = {juego_idx}
@@ -95,6 +95,47 @@ def recomendar_juegos_por_nombre(nombre_juego, n_recomendaciones=5, min_tags_com
         })
     return recomendaciones
 
+def evaluar_desempeño_recomendador(juegos_prueba, n_recomendaciones=5):
+    """
+    Evalúa el desempeño del sistema recomendador usando una métrica ad hoc:
+    Porcentaje de coincidencia entre géneros y tags del juego original y los recomendados.
+    """
+    total_similitud = 0
+    total_evaluados = 0
+
+    for juego in juegos_prueba:
+        try:
+            recs = recomendar_juegos_por_nombre(juego, n_recomendaciones)
+            if not recs:
+                continue
+
+            juego_idx = df.index[df['name'] == juego][0]
+            tags_obj = set(df.loc[juego_idx, 'tags_list'])
+            genres_obj = set(df.loc[juego_idx, 'genres_list'])
+
+            similitudes = []
+            for r in recs:
+                idx = df[df['name'] == r['nombre']].index[0]
+                tags_rec = set(df.loc[idx, 'tags_list'])
+                genres_rec = set(df.loc[idx, 'genres_list'])
+
+                jaccard_tags = len(tags_obj & tags_rec) / len(tags_obj | tags_rec) if tags_obj | tags_rec else 0
+                jaccard_genres = len(genres_obj & genres_rec) / len(genres_obj | genres_rec) if genres_obj | genres_rec else 0
+
+                score = 0.6 * jaccard_tags + 0.4 * jaccard_genres
+                similitudes.append(score)
+
+            promedio = sum(similitudes) / len(similitudes)
+            total_similitud += promedio
+            total_evaluados += 1
+
+        except:
+            continue
+
+    desempeño_global = total_similitud / total_evaluados if total_evaluados else 0
+    return desempeño_global
+
+
 # ================= INTERFAZ STREAMLIT ===================
 
 st.set_page_config(layout="wide")
@@ -138,3 +179,18 @@ if st.button("🔍 Recomendar juegos similares"):
                 st.markdown("---")
     except ValueError as e:
         st.error(str(e))
+
+# Evaluación del desempeño del sistema
+st.markdown("## 📊 Evaluación del sistema")
+
+if st.checkbox("Mostrar evaluación del recomendador con métrica ad hoc"):
+    juegos_evaluacion = ["Warhammer® 40,000: Dawn of War® - Soulstorm", "Portal 2", "Celeste", "DOOM", "DEFCON"]  # puedes cambiar estos
+    score = evaluar_desempeño_recomendador(juegos_evaluacion)
+    st.success(f"Desempeño promedio (métrica ad hoc): {score:.2f}")
+    st.markdown("""
+    **¿Qué significa esta métrica?**
+
+    - Es un valor entre 0 y 1.
+    - Se basa en la similitud de tags y géneros entre el juego original y los recomendados.
+    - Cuanto más alto, mejor alineado está el sistema con el contenido esperado.
+    """)
